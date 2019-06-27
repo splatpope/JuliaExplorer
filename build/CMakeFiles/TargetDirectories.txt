@@ -1,0 +1,4 @@
+/home/splatpope/Documents/src/JuliaExplorer/build/CMakeFiles/edit_cache.dir
+/home/splatpope/Documents/src/JuliaExplorer/build/CMakeFiles/rebuild_cache.dir
+/home/splatpope/Documents/src/JuliaExplorer/build/CMakeFiles/glad.dir
+/home/splatpope/Documents/src/JuliaExplorer/build/CMakeFiles/JuliaExplorer.dir

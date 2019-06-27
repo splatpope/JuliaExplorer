@@ -1,0 +1,49 @@
+[
+{
+  "directory": "/home/splatpope/Documents/src/JuliaExplorer/build",
+  "command": "/usr/bin/gcc-8  -I../include  -g   -o CMakeFiles/glad.dir/src/glad.c.o   -c /home/splatpope/Documents/src/JuliaExplorer/src/glad.c",
+  "file": "/home/splatpope/Documents/src/JuliaExplorer/src/glad.c"
+},
+
+{
+  "directory": "/home/splatpope/Documents/src/JuliaExplorer/build",
+  "command": "/usr/bin/g++-8   -I.././include -I/usr/include/stb -I../  -g   -o CMakeFiles/JuliaExplorer.dir/src/GLError.cpp.o -c /home/splatpope/Documents/src/JuliaExplorer/src/GLError.cpp",
+  "file": "/home/splatpope/Documents/src/JuliaExplorer/src/GLError.cpp"
+},
+
+{
+  "directory": "/home/splatpope/Documents/src/JuliaExplorer/build",
+  "command": "/usr/bin/g++-8   -I.././include -I/usr/include/stb -I../  -g   -o CMakeFiles/JuliaExplorer.dir/src/julia.cpp.o -c /home/splatpope/Documents/src/JuliaExplorer/src/julia.cpp",
+  "file": "/home/splatpope/Documents/src/JuliaExplorer/src/julia.cpp"
+},
+
+{
+  "directory": "/home/splatpope/Documents/src/JuliaExplorer/build",
+  "command": "/usr/bin/g++-8   -I.././include -I/usr/include/stb -I../  -g   -o CMakeFiles/JuliaExplorer.dir/src/main.cpp.o -c /home/splatpope/Documents/src/JuliaExplorer/src/main.cpp",
+  "file": "/home/splatpope/Documents/src/JuliaExplorer/src/main.cpp"
+},
+
+{
+  "directory": "/home/splatpope/Documents/src/JuliaExplorer/build",
+  "command": "/usr/bin/g++-8   -I.././include -I/usr/include/stb -I../  -g   -o CMakeFiles/JuliaExplorer.dir/src/mdl.cpp.o -c /home/splatpope/Documents/src/JuliaExplorer/src/mdl.cpp",
+  "file": "/home/splatpope/Documents/src/JuliaExplorer/src/mdl.cpp"
+},
+
+{
+  "directory": "/home/splatpope/Documents/src/JuliaExplorer/build",
+  "command": "/usr/bin/g++-8   -I.././include -I/usr/include/stb -I../  -g   -o CMakeFiles/JuliaExplorer.dir/src/renderer.cpp.o -c /home/splatpope/Documents/src/JuliaExplorer/src/renderer.cpp",
+  "file": "/home/splatpope/Documents/src/JuliaExplorer/src/renderer.cpp"
+},
+
+{
+  "directory": "/home/splatpope/Documents/src/JuliaExplorer/build",
+  "command": "/usr/bin/g++-8   -I.././include -I/usr/include/stb -I../  -g   -o CMakeFiles/JuliaExplorer.dir/src/screen.cpp.o -c /home/splatpope/Documents/src/JuliaExplorer/src/screen.cpp",
+  "file": "/home/splatpope/Documents/src/JuliaExplorer/src/screen.cpp"
+},
+
+{
+  "directory": "/home/splatpope/Documents/src/JuliaExplorer/build",
+  "command": "/usr/bin/g++-8   -I.././include -I/usr/include/stb -I../  -g   -o CMakeFiles/JuliaExplorer.dir/src/util.cpp.o -c /home/splatpope/Documents/src/JuliaExplorer/src/util.cpp",
+  "file": "/home/splatpope/Documents/src/JuliaExplorer/src/util.cpp"
+}
+]

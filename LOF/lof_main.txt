@@ -1,0 +1,154 @@
+        #julia set buffer objects
+        uint TESTVAO, TESTVBO, TESTEBO;
+        glGenVertexArrays(1, &TESTVAO);
+        glGenBuffers(1, &TESTVBO);
+        glGenBuffers(1, &TESTEBO);
+
+        glBindVertexArray(TESTVAO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, TESTVBO);
+        glBufferData(GL_ARRAY_BUFFER, julia_mesh.vertices.size()*sizeof(Vertex), julia_mesh.vertices.data(), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TESTEBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, julia_mesh.indices.size()*sizeof(uint), julia_mesh.indices.data(), GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, Normal));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, Color));
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, TexCoords));
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+
+
+        #julia set shader info
+        Shader s_julia("src/textured.vs", "src/julia.fs");
+        s_julia.use();
+        s_julia.setVec2("c", glm::vec2{-0.2f, -0.5f});
+        s_julia.setInt("iter", 1000);
+
+        #julia set geometry
+        vector<Vertex> julia_verts;
+        vector<uint> julia_inds;
+        {
+            
+             //Define a square
+            Vertex tl, tr, bl, br;
+
+            //top left
+            tl.Position = glm::vec3 { -0.75f, 0.75f,  0.0f };
+            tl.Color = glm::vec4 { 0.5f };
+            tl.TexCoords = glm::vec2 { 0, 1 };
+            //top right
+            tr.Position = glm::vec3 {  0.75f, 0.75f,  0.0f };
+            tr.TexCoords = glm::vec2 { 1, 1 };
+            //bottom left
+            bl.Position = glm::vec3 { -0.75f, -0.75f, 0.0f };
+            bl.TexCoords = glm::vec2 { 0, 0 };
+            //bottom right
+            br.Position = glm::vec3 {  0.75f, -0.75f, 0.0f };
+            br.TexCoords = glm::vec2 { 1, 0 };
+
+            julia_verts = vector<Vertex> { tl, tr, bl, br };
+            julia_inds = vector<uint> { 0, 2, 3, 3, 1, 0 };
+        }
+        //we need some geometry to render to
+        Mesh julia_mesh { julia_verts, julia_inds };
+        /* Model julia_model;
+        julia_model.meshes.push_back(julia_mesh);
+        julia_model.FillBuffers(); */
+
+        #square mesh geometry
+        //Define a square
+        Vertex tl, tr, bl, br;
+
+        //top left
+        tl.Position = glm::vec3 { -0.75f, 0.75f,  0.0f };
+        tl.Color = glm::vec4 { 0.5f };
+        tl.TexCoords = glm::vec2 { 0, 1 };
+        //top right
+        tr.Position = glm::vec3 {  0.75f, 0.75f,  0.5f };
+        tr.TexCoords = glm::vec2 { 1, 1 };
+        //bottom left
+        bl.Position = glm::vec3 { -0.75f, -0.75f, 0.0f };
+        bl.TexCoords = glm::vec2 { 0, 0 };
+        //bottom right
+        br.Position = glm::vec3 {  0.75f, -0.75f, 0.0f };
+        br.TexCoords = glm::vec2 { 1, 0 };
+        vector<Vertex> square_vertices
+        {
+            tl, tr, bl, br
+        };
+        vector<uint> square_indices
+        {
+            0, 2, 3,
+            3, 1, 0
+        };
+        Mesh square_mesh { square_vertices, square_indices };
+        Model square_model;
+        square_model.meshes.push_back(square_mesh);
+        //square_model.meshes.push_back(square_mesh);
+        square_model.FillBuffers();
+
+        #rendering loop
+        if(applet == "django")
+            {
+                //but these fuckers need to be reset every frame
+                glm::mat4 model {1.0f};
+
+                glBindTexture(GL_TEXTURE_2D, affiche); // NEED TO INTEGRATE THIS IN RENDERER 
+
+                glm::mat4 view = camera.GetViewMatrix();
+                model = glm::rotate(model, glm::radians(-60.0f), glm::vec3{1.0f, 0.0f, 0.0f});
+                model = glm::rotate(model, (float)glfwGetTime(), glm::vec3{0.0f, 0.0f, 1.0f});
+                glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+
+                glm::mat4 mvp = projection * view * model;
+                s_textured.use();
+                s_textured.setMat4("mvp", mvp);
+            }
+            else
+            {
+
+                glBindVertexArray(TESTVAO);
+                s_julia.use();
+                check_gl_error();
+                glBindTexture(GL_TEXTURE_1D, palette);
+
+                s_julia.setMat4("mvp", glm::mat4{1.0f});
+                glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+                glBindVertexArray(0);
+            }
+
+
+        //Generates a renderer, holding information about current rendering passes to be done over a list of models
+        Renderer r_instance;
+        r_instance.Debug();
+
+
+#julia set palette
+    data = stbi_load("asset/palette.png", &width, &height, &nrChannels, 0);
+    uint palette;
+    glGenTextures(1, &palette);
+    glBindTexture(GL_TEXTURE_1D, palette);
+    check_gl_error();
+    if(data)
+    {
+        glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA, width, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        check_gl_error();
+        glGenerateMipmap(GL_TEXTURE_1D);
+    }
+    else
+    {
+        std::cout << "FAILED TO LOAD IMAGE" << std::endl;
+    }
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_1D, 0);
+    stbi_image_free(data);
