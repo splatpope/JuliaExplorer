@@ -5,6 +5,10 @@ Julia set generator and explorer using OpenGL
 * OpenGL 3.3 core
 * GLFW
 * stb
+* ninja
+
+To compile, open the folder in VSCode or go to build/, then type cmake .. && ninja
+Run the executable from the base folder.
 
 ## Features
 * Julia set visualizer with complex offset
