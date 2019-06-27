@@ -1,0 +1,7 @@
+find_package(assimp REQUIRED)
+if (assimp_FOUND)
+    set(ASSIMP_LIBRARY "assimp")
+    add_library(${ASSIMP_LIBRARY} SHARED IMPORTED)
+    set_target_properties(${ASSIMP_LIBRARY} PROPERTIES IMPORTED_LOCATION "/usr/lib/x86_64-linux-gnu/libassimp.so")
+endif(assimp_FOUND)
+message(STATUS "${ASSIMP_LIBRARY} ${ASSIMP_LIBRARY_DIRS}")

@@ -16,10 +16,6 @@
 #define GLT_IMPLEMENTATION
 #include "gltext.h"
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
 #include "util.h"
 #include "camera.h"
 #include "julia.h"

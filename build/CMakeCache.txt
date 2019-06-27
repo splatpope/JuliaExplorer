@@ -14,9 +14,6 @@
 # EXTERNAL cache entries
 ########################
 
-//the suffix for the openrave libraries
-ASSIMP_LIBRARY_SUFFIX:STRING=
-
 //Path to a program.
 CMAKE_AR:FILEPATH=/usr/bin/ar
 
@@ -208,9 +205,6 @@ JuliaExplorer_SOURCE_DIR:STATIC=/home/splatpope/Documents/src/JuliaExplorer
 //pkg-config executable
 PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
 
-//The directory containing a CMake configuration file for assimp.
-assimp_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/assimp-4.1
-
 //Path to a library.
 pkgcfg_lib_GLFW_glfw:FILEPATH=/usr/lib/x86_64-linux-gnu/libglfw.so
 
@@ -219,8 +213,6 @@ pkgcfg_lib_GLFW_glfw:FILEPATH=/usr/lib/x86_64-linux-gnu/libglfw.so
 # INTERNAL cache entries
 ########################
 
-//ADVANCED property for variable: ASSIMP_LIBRARY_SUFFIX
-ASSIMP_LIBRARY_SUFFIX-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_AR
 CMAKE_AR-ADVANCED:INTERNAL=1
 //This is the directory where this CMakeCache.txt was created

@@ -39,3 +39,13 @@
 1645	1830	1561503071	JuliaExplorer	cfaa0f3a9726d117
 2	2372	1561503156	CMakeFiles/JuliaExplorer.dir/src/julia.cpp.o	b0515d9e14113ad0
 2372	2568	1561503156	JuliaExplorer	cfaa0f3a9726d117
+3	4265	1561660212	CMakeFiles/JuliaExplorer.dir/src/main.cpp.o	fb618a924a41b4bd
+14	2637	1561660403	CMakeFiles/glad.dir/src/glad.c.o	8d49c199cedc714f
+2637	2973	1561660404	libglad.a	914f8f1410fefc9e
+2973	3339	1561660404	CMakeFiles/JuliaExplorer.dir/src/util.cpp.o	30764e2b19b1d01f
+26	5538	1561660406	CMakeFiles/JuliaExplorer.dir/src/GLError.cpp.o	168f3cb4f97f79ce
+89	11672	1561660412	CMakeFiles/JuliaExplorer.dir/src/screen.cpp.o	c754a3a940a1088e
+36	12665	1561660413	CMakeFiles/JuliaExplorer.dir/src/julia.cpp.o	a29d4af72ca60b37
+62	12828	1561660414	CMakeFiles/JuliaExplorer.dir/src/mdl.cpp.o	a5464b3a37250b2d
+42	14547	1561660415	CMakeFiles/JuliaExplorer.dir/src/main.cpp.o	bd4957df5d9bf317
+14547	15029	1561660416	JuliaExplorer	1d920a55a5db0cc1
