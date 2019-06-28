@@ -20,3 +20,6 @@ Run the executable from the base folder.
 * Directional keys for moving the complex offset
 * R to reset complex offset to 0,0
 * V to print debug info
+
+## Gallery (and devblog)
+https://imgur.com/gallery/0hGEB7X
