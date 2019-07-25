@@ -19,7 +19,8 @@ Run the executable from the base folder.
 * Keypad + and - for zooming
 * Directional keys for moving the complex offset
 * R to reset complex offset to 0,0
-* V to print debug info
+* P to take a timestamped screenshot of the fractal
+* V to print debug info (if available...)
 
 ## Gallery (and devblog)
 https://imgur.com/gallery/0hGEB7X
