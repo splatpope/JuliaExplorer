@@ -9,10 +9,11 @@
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
-    FORWARD,
-    BACKWARD,
-    LEFT,
-    RIGHT
+    CAM_RESET = -1,
+    CAM_FORWARD,
+    CAM_BACKWARD,
+    CAM_LEFT,
+    CAM_RIGHT
 };
 
 // Default camera values
@@ -21,6 +22,7 @@ const float PITCH       =  0.0f;
 const float SPEED       =  2.5f;
 const float SENSITIVITY =  0.1f;
 const float ZOOM        =  45.0f;
+// holy shit put all this crap in a namespace please
 
 
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
@@ -70,15 +72,15 @@ public:
     void ProcessKeyboard(Camera_Movement direction, float deltaTime)
     {
         float velocity = MovementSpeed * deltaTime;
-        if (direction == FORWARD)
+        if (direction == CAM_FORWARD)
             Position += Up * velocity;
             //Position += Front * velocity;     //use Up (pan) instead of Front (zoom)
-        if (direction == BACKWARD)
+        if (direction == CAM_BACKWARD)
             Position -= Up * velocity;
             //Position -= Front * velocity;
-        if (direction == LEFT)
+        if (direction == CAM_LEFT)
             Position -= Right * velocity;
-        if (direction == RIGHT)
+        if (direction == CAM_RIGHT)
             Position += Right * velocity;
     }
 

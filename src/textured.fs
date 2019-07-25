@@ -1,11 +1,11 @@
-#version 330 core
-    in vec4 Col;
-    in vec2 TexCoord;
+#version 330 core // BLINDLY OUTPUT TEXTURE COLOR
+in vec2 TexCoord;
 
-    uniform sampler2D tex;
+uniform sampler2D tex;
 
-    out vec4 FragColor;
-     void main()
-    {
-        FragColor = texture(tex, TexCoord) * Col;
-    }
+out vec4 FragColor;
+
+void main()
+{
+    FragColor = texture(tex, TexCoord);
+}

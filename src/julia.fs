@@ -1,13 +1,12 @@
 #version 330 core
 in vec2 TexCoord;
+out vec4 FragColor;
 
 uniform sampler1D tex;
 uniform int iter;
 uniform vec2 c;
 uniform vec2 pan;
 uniform float zoom;
-uniform float ratio;
-uniform float rel_size;
 
 float abs2(vec2 z)
 {
@@ -34,8 +33,7 @@ vec3 hsv2rgb(vec3 c)
 
 void main() {
     vec2 z;
-    vec2 point = TexCoord / pow(zoom, exp(1));
-    point.x /= (rel_size);
+    vec2 point = TexCoord / zoom;
 
     z.x = (point.x + pan.x);
     z.y = (point.y + pan.y);
@@ -50,15 +48,18 @@ void main() {
         z.y = y;
     }
 
-    //magic logarithm color so we can index the palette with iterations before loop exit
+    // **magic** logarithm color so we can index the palette with iterations before loop exit
     float palIndex = ( i - log(z.x*z.x + z.y*z.y) / log(4)) / i;
-    //get palette with index
+    // get palette color with index
     vec3 col = texture(tex, (i >= iter) ? 0 : palIndex).xyz;
+
     //col = hsv2rgb(vec3(rgb2hsv(col).x, 0.5, 1));
     //get a fancy hsv color with the index
     //vec3 colHSV = hsv2rgb(vec3(palIndex, 1, 0.9));
 
-/*     float cross = 0.01f/zoom;
+/*     
+    // this is great, but do that in the rendertarget shader once it's finished
+    float cross = 0.01f/zoom;
     if ((abs(point.x) < cross) || (abs(point.y) < cross))
     {
         col = vec3(1);
@@ -67,11 +68,12 @@ void main() {
     {
         col = vec3(1, 0, 0);
     } */
-    vec3 colHSV = rgb2hsv(col);
-    col = hsv2rgb(vec3(colHSV.xy, pow(colHSV.z, 4)));
 
-    //output the product of both colors to maximize coolness
-    gl_FragColor = vec4(col, 1);
+    // greatly reduce luminosity, might want to use a uniform to control that
+    vec3 colHSV = rgb2hsv(col);
+    col = hsv2rgb(vec3(colHSV.xy, pow(colHSV.z, 8)));
+
+    FragColor = vec4(col, 1);
 
 }
 			

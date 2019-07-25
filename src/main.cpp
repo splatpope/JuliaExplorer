@@ -30,9 +30,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void processInput(GLFWwindow *window, Julia &app);
 
 // settings
-const uint SCR_BORDER_WIDTH = 3;
-const uint SCR_WIDTH = 1200;
-const uint SCR_HEIGHT = 600;
+// BRO WE NEED TO ABSTRACT THAT SHIET
+
 bool JULIA_FRAMEBUFFER_DIRTY = true;
 
 // mouse processing
@@ -51,6 +50,7 @@ int main(int argc, char* argv[])
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //glfwWindowHint(GLFW_SAMPLES, 4);
+    // ^^^ test this once we get rendertarget stuff figured out
 
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "KEDISS", nullptr, nullptr);
     if (window == nullptr)
@@ -70,29 +70,32 @@ int main(int argc, char* argv[])
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     //glfwSetScrollCallback(window, scroll_callback);
+    // ^^^ useless unless we want to zoom with the mouse (likely) or make a gui with scrollbars (very likely)
 
     // tell GLFW to capture our mouse
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    // but really is this useful ?
 
     //glEnable(GL_MULTISAMPLE);
 /////////////////////////////////////THIS IS WHERE THE REAL FUN BEGINS////////////////////////////////////////////////////////////
-    //bad
-    //glViewport( SCR_BORDER_WIDTH, SCR_BORDER_WIDTH, std::ceil(SCR_WIDTH * 3/4.0f) - SCR_BORDER_WIDTH, SCR_HEIGHT - SCR_BORDER_WIDTH * 2);
 
-    //flipping cause gl is dumb, but heck we use a 1D texture
+    // flipping cause gl is dumb, but heck we use a 1D texture
     stbi_set_flip_vertically_on_load(true);
-//TEXTURES ARE NICE AND SHIT BUT AUTOMATE PLS/////////////////////////////////////////////////////////////////////
 
     //THIS BLOCK MAKES SURE EVERYTHING IS DESTROYED PROPERLY
     {
-        check_gl_error();
+        check_gl_error(); //paranoia
 
-
-        //^^^^ ALL OF THIS MODEL CREATION BULLSHIT COULD BE DONE AUTOMATICALLY
-
-        Julia jl("asset/softgold.png");
-        std::cout<<"PALETTE 0 : "<<jl.Palette<<std::endl;
-
+/*      
+        //BEFORE THIS CAN WORK, WE NEED TO UPGRADE Julia::
+        //
+        //init screen and its shader
+        Screen viewport(SCR_WIDTH/SCR_HEIGHT, SCR_VIEWPORT_SIZE_FACTOR, SCR_VIEWPORT);
+        Shader vpShader("src/textured.vs", "src/textured.fs");
+        //^^^ THIS SHOULD BE IN Julia::
+*/
+        //init julia object
+        Julia jl(window, "asset/redgold.png");
         check_gl_error();
 
         double lastTime = glfwGetTime();
@@ -115,44 +118,41 @@ int main(int argc, char* argv[])
         {
             check_gl_error();
 
+            // all this just to get a fps counter, pfft...
             double currentTime = glfwGetTime();
             deltaTime = currentTime - lastFrame;
             lastFrame = currentTime;
             nbFrames++;
-            if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1 sec ago
-                // printf (or not) and reset timer
+            if ( currentTime - lastTime >= 1.0 ) // if at least 1 second elapsed 
+            { 
+                // WHAT KIND OF ASSHOLES MAKES A C TEXT LIBRARY THAT ONLY ACCEPS C STRINGS wait
                 std::string frames = std::to_string(nbFrames);
-                //printf("%s fps\n", frames.c_str());
                 // and update gltext
-                gltSetText(fps_counter,  (frames + " fps").c_str());
+                gltSetText(fps_counter,  (frames + " fps").c_str()); // I MEAN COME ON
+                // reset timer for the next frame count
                 nbFrames = 0;
                 lastTime += 1.0;
             }
             processInput(window, jl);
 
-            //DO NOT FORGET TO PUT RENDERING **AFTER** THIS lol
+            //BEGIN RENDERING
             glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT); //no need for depth
 
-            if (JULIA_FRAMEBUFFER_DIRTY)
-            {
-                GLint m_viewport[4];
-                glGetIntegerv(GL_VIEWPORT, m_viewport);
-                int w = m_viewport[2];
-                int h = m_viewport[3];
-                jl.ratio = m_viewport[2]/float(m_viewport[3]);
-                jl.dirty = true;
-            }
+            //should be all we need
             jl.Draw();
+
             gltSetText(debug, jl.Report().c_str());
             check_gl_error();
-
+            // why isn't there a standard way of displaying text in opengl ?
             gltBeginDraw();
             gltColor(1.0f, 1.0f, 1.0f, 1.0f);
-            gltDrawText2D(fps_counter, 0.0f, 0.0f, 1.0f); // x=0.0, y=0.0, scale=1.0
-            gltDrawText2D(debug, SCR_WIDTH*5/8.0f + 5, 10, 1.0f);
+            gltDrawText2D(fps_counter, SCR_WIDTH - 50, SCR_HEIGHT - 25, 1.0f); // x=0.0, y=0.0, scale=1.0
+            gltDrawText2D(debug, SCR_WIDTH * SCR_VIEWPORT_SIZE_FACTOR + 5, 10, 1.0f);
+            // ^^^ gonna need to update this when viewport stuff is deglobalized
             gltEndDraw();
 
+            // FINALLY WE ARE DONE
             glfwSwapBuffers(window);
             glfwPollEvents();
             check_gl_error();
@@ -161,18 +161,21 @@ int main(int argc, char* argv[])
         check_gl_error();
         gltDeleteText(fps_counter); 
         gltTerminate();
-    }
+
+    }// Julia instance should be deleted at this point
 
     glfwTerminate();
 
-    std::cout << "END OF PROGRAM, GG YOU DIDNT SEGFAULT" << std::endl;
+    std::cout << "END OF PROGRAM, GG YOU DIDNT SEGFAULT" << std::endl; // but DID WE ???
 
 
     return 0;
 }
-//////////////////////////////////////////END OF MAIN//////////////////////////////////////
+//////////////////////////////////////////END OF MAIN////////////////////////////////////////////////////////////////////////
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+    // this is clearly not sufficient, we just need to notify the julia instance that 
+    // its framebuffers changed sizes (with all the crap that entails)
     glViewport(0, 0, width , height);
     JULIA_FRAMEBUFFER_DIRTY = true;
 }
@@ -182,36 +185,52 @@ void processInput(GLFWwindow *window, Julia &app)
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
+    // TODO: put all this in an input handler, I guess
+    // (btw it should support key<->codepoints bindings and just need to be notified here, instead of manually checking if pressed)
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        app.Pan(FORWARD); 
+        app.Pan(CAM_FORWARD); 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        app.Pan(BACKWARD); 
+        app.Pan(CAM_BACKWARD); 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        app.Pan(LEFT); 
+        app.Pan(CAM_LEFT); 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        app.Pan(RIGHT); 
+        app.Pan(CAM_RIGHT); 
     //get dir keys to change fractal offset
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        app.MoveOffset(FORWARD);
+        app.MoveOffset(CAM_FORWARD);
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        app.MoveOffset(BACKWARD);
+        app.MoveOffset(CAM_BACKWARD);
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        app.MoveOffset(RIGHT);
+        app.MoveOffset(CAM_RIGHT);
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        app.MoveOffset(LEFT);
+        app.MoveOffset(CAM_LEFT);
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
-        app.MoveOffset((Camera_Movement)-1); 
+        app.MoveOffset(CAM_RESET); 
     //zoom with + and -
     if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS)
-        app.Zoom(FORWARD); 
+        app.Zoom(CAM_FORWARD); 
     if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
-        app.Zoom(BACKWARD);
+        app.Zoom(CAM_BACKWARD);
     if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
         std::cout<<"lol";
+
+    // ideally this should be a scrollable bar on the **future** gui
+    if (glfwGetKey(window, GLFW_KEY_KP_1) == GLFW_PRESS)
+        app.iter = 10;
+    if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS)
+        app.iter = 100;
+    if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS)
+        app.iter = 1000;
+
+    // TODO: figure out how to write a png to disk from a gl texture
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+        app.Screenshot();
 }
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
+// how this is gonna help us, I don't know yet, but I sense it will
+//
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     if (firstMouse)
@@ -222,12 +241,12 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     }
 
     float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+    float yoffset = lastY - ypos; // this is in screen coordinates, y axis goes down
 
     lastX = xpos;
     lastY = ypos;
 
-    //camera.ProcessMouseMovement(xoffset, yoffset);
+    //camera.ProcessMouseMovement(xoffset, yoffset); //nope
 }
 
 

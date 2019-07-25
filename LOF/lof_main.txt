@@ -152,3 +152,61 @@
     glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_1D, 0);
     stbi_image_free(data);
+
+
+    framebuffer shit
+
+    //gen and bind fbo
+        GLuint fbo;
+        glGenFramebuffers(1, &fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        check_gl_error();
+
+        //create render target
+        GLuint renderTarget;
+        glGenTextures(1, &renderTarget);
+        glBindTexture(GL_TEXTURE_2D, renderTarget);
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, scaledWidth(SCR_VIEWPORT_SIZE_FACTOR), SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        }
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
+        check_gl_error();
+
+        //attach render target to the fbo
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTarget, 0); 
+        check_gl_error();
+
+        auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
+            std::cout << "Framebuffer not complete: " << fboStatus << std::endl;
+        if (fboStatus == GL_FRAMEBUFFER_UNSUPPORTED) 
+            std::cout << "implementation is not supported by OpenGL driver " << fboStatus << std::endl;
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); 
+
+
+fbo draw
+
+    /*
+            //!!! FBO RELATED STUFF NEEDS TO BE PUT INSIDE Julia:: BEFORE THIS CAN EVEN BEGIN TO WORK
+            //
+            //DRAW JULIA TO FBO
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            glViewport(0, 0, scaledWidth(SCR_VIEWPORT_SIZE_FACTOR), SCR_HEIGHT);
+            jl.Draw();
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+            check_gl_error();
+
+            //DRAW FBO TO SCREEN
+            vpShader.use();
+            check_gl_error();
+            glBindTexture(GL_TEXTURE_2D, renderTarget);
+            check_gl_error();
+            viewport.Bind();
+            viewport.Draw();
+            viewport.UnBind();
+            check_gl_error();
+            //
+            //IM SERIOUS
+*/

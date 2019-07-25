@@ -11,18 +11,22 @@
 #include "shader.h"
 #include "util.h"
 
+const uint SCR_RENDERTARGET = 0;
+const uint SCR_VIEWPORT = 1;
+
+
 class Screen
 {
 public:
-    Screen()
+    float m_rel_size;
+    float m_aspect_ratio;
+    Screen(float _aspect_ratio, float _rel_size, const uint _scr_type)
     {
-        Screen(0.75f);
-    }
-    Screen(float _rel_size)
-    {
+        m_rel_size = _rel_size;
+        m_aspect_ratio = _aspect_ratio;
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
-        Setup(_rel_size);
+        Setup(_scr_type);
     }
     ~Screen()
     {
@@ -37,9 +41,8 @@ public:
 private:
     GLuint VAO;
     GLuint VBO;
-    float m_rel_size;
 
-    void Setup(const float &_rel_size);
+    void Setup(const uint scr_type);
 
 };
 #endif

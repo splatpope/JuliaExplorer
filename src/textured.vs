@@ -1,15 +1,11 @@
-#version 330 core
-    layout (location = 0) in vec3 aPos;
-    layout (location = 1) in vec3 aNorm;
-    layout (location = 2) in vec3 aCol;
-    layout (location = 3) in vec2 aTexCoord;
+#version 330 core // standarde shite
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec2 aTexCoord;
 
-    out vec2 TexCoord;
+out vec2 TexCoord;
 
-    uniform mat4 mvp;
-
-    void main()
-    {
-        TexCoord = aTexCoord;
-        gl_Position = mvp * vec4(aPos, 1.0);
-    }
+void main()
+{
+    TexCoord = aTexCoord;
+    gl_Position = vec4(aPos, 0.0, 1.0); // drop z coordinate, we're in 2D baby
+}
