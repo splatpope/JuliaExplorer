@@ -13,7 +13,7 @@ void Julia::initPalette(std::string src_path)
     glGenTextures(1, &m_renderTarget);
     glBindTexture(GL_TEXTURE_2D, m_renderTarget);
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, static_cast<int>(SCR_WIDTH * SCR_VIEWPORT_SIZE_FACTOR), 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL); //put scaledWidth and scr_height instead
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, static_cast<int>(SCR_WIDTH * SCR_VIEWPORT_SIZE_FACTOR), SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL); //put scaledWidth and scr_height instead
     }
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
@@ -121,10 +121,25 @@ std::string Julia::Report()
     return _report;
 }
 
-void Julia::Screenshot()
+int Julia::Screenshot()
 {
-    std::cout<<"this is supposed to be a screenshot"<<std::endl;
-    //soon
+    
+    time_t t = time(0);   // get time now
+    struct tm * now = localtime( & t );
+
+    char filename[80]; // get text buffer for file path, with time shoved in for good measure
+    strftime(filename, 80, "asset/Screenshot_%y_%m_%d_%H_%M.png", now);
+    std::cout<<"Saving screenshot : "<<filename<<std::endl;
+
+    // allocate image buffer
+    int _scaled_width = static_cast<int>(SCR_WIDTH * SCR_VIEWPORT_SIZE_FACTOR);
+    char *data = (char*) malloc((size_t)  _scaled_width * SCR_HEIGHT * 3);
+    // then fill it with what we're just about to display
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+    int saved = stbi_write_png(filename, _scaled_width, SCR_HEIGHT, 3, data, 0);
+    free(data);
+    return saved;
 
 }
 
@@ -168,6 +183,19 @@ void Julia::Draw()
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
     m_vpShader->use();
     glBindTexture(GL_TEXTURE_2D, m_renderTarget);
+    if (queue_screenshot)
+    {
+        if(!Screenshot())
+        {
+            util::EmitLine("SCREENSHOT COULD NOT BE SAVED");
+        }
+        else
+        {
+            util::EmitLine("Screenshot saved");
+        }
+        
+        queue_screenshot = false;
+    }
     m_viewport->Bind();
     m_viewport->Draw();
     m_viewport->UnBind();

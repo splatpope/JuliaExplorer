@@ -7,7 +7,10 @@
 #include <glm/gtx/string_cast.hpp>
 
 #ifndef STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image.h>
+#include <stb_image_write.h>
+#endif
 #endif
 
 #include <string>
@@ -33,6 +36,7 @@ public:
     glm::vec2 PanDir;
     float ZoomFactor;
     bool dirty;
+    bool queue_screenshot;
     float MoveIncrements;
     float ZoomIncrements;
 
@@ -83,7 +87,7 @@ public:
     void Zoom(Camera_Movement dir);
     std::string Report();
     void Draw();
-    void Screenshot();
+    int Screenshot();
 private:
     GLuint m_fbo;
     GLuint m_renderTarget;

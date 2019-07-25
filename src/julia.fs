@@ -49,7 +49,7 @@ void main() {
     }
 
     // **magic** logarithm color so we can index the palette with iterations before loop exit
-    float palIndex = ( i - log(z.x*z.x + z.y*z.y) / log(4)) / i;
+    float palIndex = ( i - log(z.x*z.x + z.y*z.y) / log(2)) / i;
     // get palette color with index
     vec3 col = texture(tex, (i >= iter) ? 0 : palIndex).xyz;
 

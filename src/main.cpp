@@ -11,7 +11,9 @@
 
 
 #define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image.h>
+#include <stb_image_write.h>
 
 #define GLT_IMPLEMENTATION
 #include "gltext.h"
@@ -222,9 +224,9 @@ void processInput(GLFWwindow *window, Julia &app)
     if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS)
         app.iter = 1000;
 
-    // TODO: figure out how to write a png to disk from a gl texture
-    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-        app.Screenshot();
+    // TODO: figure out how to write a png to disk from a gl texture -> done :))
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) // HOPEFULLY DOESNT TRIGGER EVERY FRAME
+        app.queue_screenshot = true;
 }
 
 // glfw: whenever the mouse moves, this callback is called
